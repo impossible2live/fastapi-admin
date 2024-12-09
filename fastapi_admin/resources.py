@@ -150,6 +150,13 @@ class Model(Resource):
     @classmethod
     async def resolve_query_params(cls, request: Request, values: dict, qs: QuerySet):
         ret = {}
+        ###Changes
+        if cls.model.__name__ not in ['Restaurant', 'ClientsBots', 'Admin', 'Role', 'Resource', 'Permission', 'Config']:
+            store_id = request.session.get('store_id', None)
+            if store_id:
+                if hasattr(cls.model, 'restaurant_id'):
+                    qs = qs.filter(restaurant_id=store_id)
+        ###Changes
         for f in cls.filters:
             if isinstance(f, str):
                 f = Search(name=f, label=f.title())
