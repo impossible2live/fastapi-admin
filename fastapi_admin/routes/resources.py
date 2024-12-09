@@ -106,6 +106,12 @@ async def update(
     form = await request.form()
     data, m2m_data = await model_resource.resolve_data(request, form)
     m2m_fields = model_resource.get_m2m_field()
+     ###Changes
+    store_id = request.session.get('store_id')
+    if model.__name__ not in ['Restaurant', 'ClientsBots', 'Admin', 'Role', 'Resource', 'Permission', 'Config']:
+        if store_id and 'restaurant_id' in model._meta.fields_map:
+            data['restaurant_id_id'] = store_id
+    ###Changes
     async with in_transaction() as conn:
         obj = (
             await model.filter(pk=pk)
@@ -228,6 +234,12 @@ async def create(
     inputs = await model_resource.get_inputs(request)
     form = await request.form()
     data, m2m_data = await model_resource.resolve_data(request, form)
+     ###Changes
+    store_id = request.session.get('store_id')
+    if model.__name__ not in ['Restaurant', 'ClientsBots', 'Admin', 'Role', 'Resource', 'Permission', 'Config']:
+        if store_id and 'restaurant_id' in model._meta.fields_map:
+            data['restaurant_id_id'] = store_id
+    ###Changes
     async with in_transaction() as conn:
         obj = await model.create(**data, using_db=conn)
         for k, items in m2m_data.items():
